@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import CarMake, CarModel
 
 from .populate import initiate
-
+from .restapis import get_request, analyze_review_sentiments, post_review
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
@@ -92,15 +92,60 @@ def register(request):
 # a list of dealerships
 # def get_dealerships(request):
 # ...
+# Update the `get_dealerships` render list of dealerships
+def get_dealerships(request, state="All"):
+    if state == "All":
+        endpoint = "/fetchDealers"
+    else:
+        endpoint = "/fetchDealers/" + state
 
+    dealerships = get_request(endpoint)
+    return JsonResponse({"status": 200, "dealers": dealerships})
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
 # def get_dealer_reviews(request,dealer_id):
 # ...
+def get_dealer_reviews(request, dealer_id):
+    endpoint = "/fetchReviews/dealer/" + dealer_id
+    reviews = get_request(endpoint)
 
+    for review in reviews:
+        if "review" in review:
+            sentiment_response = analyze_review_sentiments(review["review"])
+            if sentiment_response:
+                review["sentiment"] = sentiment_response.get("sentiment")
+
+    return JsonResponse({"status": 200, "reviews": reviews})
 # Create a `get_dealer_details` view to render the dealer details
 # def get_dealer_details(request, dealer_id):
 # ...
-
+def get_dealer_details(request, dealer_id):
+    endpoint = "/fetchDealer/" + dealer_id
+    dealer = get_request(endpoint)
+    return JsonResponse({"status": 200, "dealer": dealer})
 # Create a `add_review` view to submit a review
 # def add_review(request):
 # ...
+def add_review(request):
+    """
+    View to handle POST request for dealer review.
+    Only authenticated users can post reviews.
+    """
+    if not request.user.is_anonymous:
+        try:
+            data = json.loads(request.body)  # Parse incoming JSON
+            response = post_review(data)     # Call REST API
+            return JsonResponse({
+                "status": 200,
+                "message": "Review posted successfully",
+                "data": response
+            })
+        except Exception as e:
+            return JsonResponse({
+                "status": 401,
+                "message": f"Error in posting review: {str(e)}"
+            })
+    else:
+        return JsonResponse({
+            "status": 403,
+            "message": "Unauthorized: You must be logged in to post a review"
+        })
