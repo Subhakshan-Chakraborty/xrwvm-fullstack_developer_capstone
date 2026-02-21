@@ -11,7 +11,7 @@ import Header from '../Header/Header';
 const Dealer = () => {
 
 
-  const [dealer, setDealer] = useState({});
+  const [dealer, setDealer] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [unreviewed, setUnreviewed] = useState(false);
   const [postReview, setPostReview] = useState(<></>)
@@ -25,14 +25,11 @@ const Dealer = () => {
   let post_review = root_url+`postreview/${id}`;
   
   const get_dealer = async ()=>{
-    const res = await fetch(dealer_url, {
-      method: "GET"
-    });
+    const res = await fetch(dealer_url);
     const retobj = await res.json();
-    
+
     if(retobj.status === 200) {
-      let dealerobjs = Array.from(retobj.dealer)
-      setDealer(dealerobjs[0])
+      setDealer(retobj.dealer);   // ✅ DIRECTLY SET OBJECT
     }
   }
 
@@ -66,6 +63,14 @@ const Dealer = () => {
     }
   },[]);  
 
+if (!dealer) {
+  return (
+    <div style={{margin:"20px"}}>
+      <Header />
+      <h2>Loading Dealer...</h2>
+    </div>
+  );
+}
 
 return(
   <div style={{margin:"20px"}}>
@@ -74,7 +79,7 @@ return(
       <h1 style={{color:"grey"}}>{dealer.full_name}{postReview}</h1>
       <h4  style={{color:"grey"}}>{dealer['city']},{dealer['address']}, Zip - {dealer['zip']}, {dealer['state']} </h4>
       </div>
-      <div class="reviews_panel">
+      <div className="reviews_panel">
       {reviews.length === 0 && unreviewed === false ? (
         <text>Loading Reviews....</text>
       ):  unreviewed === true? <div>No reviews yet! </div> :
