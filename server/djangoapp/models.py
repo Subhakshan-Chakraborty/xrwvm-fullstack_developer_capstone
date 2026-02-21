@@ -12,17 +12,16 @@ class CarMake(models.Model):
 
 
 class CarModel(models.Model):
-
-    SEDAN = 'Sedan'
-    SUV = 'SUV'
-    WAGON = 'Wagon'
-    HATCHBACK = 'Hatchback'
+    SEDAN = "Sedan"
+    SUV = "SUV"
+    WAGON = "Wagon"
+    HATCHBACK = "Hatchback"
 
     CAR_TYPE_CHOICES = [
-        (SEDAN, 'Sedan'),
-        (SUV, 'SUV'),
-        (WAGON, 'Wagon'),
-        (HATCHBACK, 'Hatchback'),
+        (SEDAN, "Sedan"),
+        (SUV, "SUV"),
+        (WAGON, "Wagon"),
+        (HATCHBACK, "Hatchback"),
     ]
 
     make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
@@ -31,12 +30,12 @@ class CarModel(models.Model):
     type = models.CharField(
         max_length=20,
         choices=CAR_TYPE_CHOICES,
-        default=SEDAN
+        default=SEDAN,
     )
     year = models.IntegerField(
         validators=[
             MinValueValidator(2015),
-            MaxValueValidator(2023)
+            MaxValueValidator(2023),
         ]
     )
 

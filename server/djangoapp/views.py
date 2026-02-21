@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 def get_cars(request):
     count = CarMake.objects.filter().count()
     print(count)
-    if(count == 0):
+    if (count == 0):
         initiate()
     car_models = CarModel.objects.select_related('make')
     cars = []
@@ -30,6 +30,8 @@ def get_cars(request):
     return JsonResponse({"CarModels": cars})
 
 # Create a `login_request` view to handle sign in request
+
+
 @csrf_exempt
 def login_user(request):
     # Get username and password from request.POST dictionary
@@ -45,9 +47,12 @@ def login_user(request):
         data = {"userName": username, "status": "Authenticated"}
     return JsonResponse(data)
 
+
 # Create a `logout_request` view to handle sign out request
 # def logout_request(request):
 # ...
+
+
 def logout_user(request):
     logout(request)  # Terminate user session
     data = {"userName": ""}  # Return empty username
@@ -57,6 +62,8 @@ def logout_user(request):
 # def registration(request):
 # ...
 # Create a `registration` view to handle sign up request
+
+
 @csrf_exempt
 def register(request):
     data = json.loads(request.body)
@@ -93,6 +100,8 @@ def register(request):
 # def get_dealerships(request):
 # ...
 # Update the `get_dealerships` render list of dealerships
+
+
 def get_dealerships(request, state="All"):
     if state == "All":
         endpoint = "/fetchDealers"
@@ -101,9 +110,13 @@ def get_dealerships(request, state="All"):
 
     dealerships = get_request(endpoint)
     return JsonResponse({"status": 200, "dealers": dealerships})
+
+
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
 # def get_dealer_reviews(request,dealer_id):
 # ...
+
+
 def get_dealer_reviews(request, dealer_id):
     endpoint = "/fetchReviews/dealer/" + str(dealer_id)
     reviews = get_request(endpoint)
@@ -115,9 +128,12 @@ def get_dealer_reviews(request, dealer_id):
                 review["sentiment"] = sentiment_response.get("sentiment")
 
     return JsonResponse({"status": 200, "reviews": reviews})
+
 # Create a `get_dealer_details` view to render the dealer details
 # def get_dealer_details(request, dealer_id):
 # ...
+
+
 def get_dealer_details(request, dealer_id):
     endpoint = "/fetchDealer/" + str(dealer_id)
     dealer = get_request(endpoint)
@@ -125,6 +141,8 @@ def get_dealer_details(request, dealer_id):
 # Create a `add_review` view to submit a review
 # def add_review(request):
 # ...
+
+
 def add_review(request):
     """
     View to handle POST request for dealer review.

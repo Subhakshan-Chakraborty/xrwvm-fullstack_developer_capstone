@@ -1,0 +1,9 @@
+[flake8]
+exclude =
+    djangoenv,
+    venv,
+    __pycache__,
+    migrations,
+    node_modules,
+    frontend
+max-line-length = 120
